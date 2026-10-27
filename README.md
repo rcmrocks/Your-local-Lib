@@ -2,15 +2,25 @@
 
 A Windows desktop catalog for a personal Libib library. It imports a collection CSV, then checks the shelves with a keyboard-wedge barcode scanner. The scanner types a barcode and presses Enter. There is no scanner SDK and no account.
 
-Version 1.4.1. The window, the Start menu, the installer, and the program folder say **Your Local Lib**. The catalog lives at `%LOCALAPPDATA%\YourLocalLib\library.db`. Opening an older copy moves `%LOCALAPPDATA%\IrishsLibraryTracker` here if the new folder is not there yet. Uninstalling the program leaves the catalog where it is. Opening an older catalog keeps your titles, your tags, and your ratings, and a title you had already rated is marked as done.
+## Download and install
+
+Version 1.4.1 for 64-bit Windows.
+
+**[Download YourLocalLib-Setup.exe](https://github.com/rcmrocks/Your-local-Lib/releases/latest/download/YourLocalLib-Setup.exe)**
+
+The same file is listed on the [latest release](https://github.com/rcmrocks/Your-local-Lib/releases/latest).
+
+1. Open `YourLocalLib-Setup.exe`.
+2. If Windows says it protected your PC, click **More info**, then **Run anyway**. The installer is not signed.
+3. Step through the setup. It does not ask for an administrator password. It installs for the current Windows user into `%LOCALAPPDATA%\Programs\Your Local Lib` and adds a Start menu shortcut named Your Local Lib.
+4. **Add a shortcut to the desktop** is already checked. Clear it if you do not want a desktop icon.
+5. **Open Your Local Lib** is checked on the last page. Leave it checked and press Finish.
+
+The installed program includes the .NET runtime. Nothing else has to be installed. To look around before you import your own library, open **Scan** and press **Try a sample library**.
+
+The window, the Start menu, the installer, and the program folder say **Your Local Lib**. The catalog lives at `%LOCALAPPDATA%\YourLocalLib\library.db`. Opening an older copy moves `%LOCALAPPDATA%\IrishsLibraryTracker` here if the new folder is not there yet. Uninstalling the program leaves the catalog where it is. Opening an older catalog keeps your titles, your tags, and your ratings, and a title you had already rated is marked as done.
 
 Libib catalogs books, movies, music (records, CDs, vinyl), video games, and board games. All five types import, sit on shelves, and filter on Library. Scan a UPC the same way you scan an ISBN. Choose the type on Scan before a new barcode; a barcode already in the catalog keeps the type it has.
-
-## Install
-
-Run `YourLocalLib-Setup.exe` from the top of this repository. It installs for the current Windows user, without an administrator password, into `%LOCALAPPDATA%\Programs\Your Local Lib`, and adds a Start menu shortcut named Your Local Lib. On the Shortcuts page, **Add a shortcut to the desktop** is already checked. Clear it if you do not want a desktop icon. On the last page, **Open Your Local Lib** is checked. Leave it checked and the program opens when you press Finish.
-
-The setup program is packed with solid LZMA compression so the download is smaller than the installed program. The installed program includes the .NET runtime.
 
 ## Scanner
 
@@ -86,7 +96,7 @@ dotnet publish src/YourLocalLib -c Release -r win-x64 --self-contained true -o p
 makensis installer/setup.nsi
 ```
 
-The setup program is written to `dist/YourLocalLib-Setup.exe`. Copy it to the top of the repository as `YourLocalLib-Setup.exe`. `publish/` and `dist/` are not part of the git history. The wizard images live in `installer/` and use the same paper, ink, and forest green as the program.
+The setup program is written to `dist/YourLocalLib-Setup.exe`. Attach that file to a GitHub release. It is not stored in git. `publish/` and `dist/` are not part of the git history. The wizard images live in `installer/` and use the same paper, ink, and forest green as the program.
 
 ## Support
 

@@ -2,6 +2,7 @@ bin/
 obj/
 publish/
 dist/
+/YourLocalLib-Setup.exe
 .dotnet/
 *.user
 .vs/
