@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:YourLocalLib.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             x:Class="YourLocalLib.Views.ImportView"
+             x:DataType="vm:ImportViewModel">
+  <ScrollViewer Margin="40,32">
+    <StackPanel Spacing="16" MaxWidth="680" HorizontalAlignment="Left">
+      <TextBlock Classes="section" Text="Import" />
+      <TextBlock TextWrapping="Wrap" Text="On the Libib website, open Settings and choose Export Collection Data. Export one collection at a time. The file is a CSV. Libib catalogs books, movies, music, video games, and board games, and all of those import here. Ratings, reviews, and reading progress are kept for display and are not edited here." />
+      <TextBlock Classes="muted" TextWrapping="Wrap" Text="Importing again updates the bibliographic fields and keeps the shelves you already stored. A sample library is replaced only after you confirm. A type-only Libib template has no item_type column; Auto reads the extra headers, or pick the type yourself." />
+      <StackPanel Orientation="Horizontal" Spacing="12">
+        <Button Content="Choose CSV" Command="{Binding ChooseFileCommand}" Classes="primary" />
+        <TextBlock Text="{Binding FileName}" VerticalAlignment="Center" />
+      </StackPanel>
+      <StackPanel Spacing="6" MaxWidth="320">
+        <TextBlock Classes="muted" Text="This file is" />
+        <ComboBox ItemsSource="{Binding KindChoices}" SelectedItem="{Binding SelectedKind}" HorizontalAlignment="Stretch">
+          <ComboBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:KindChoice">
+              <TextBlock Text="{Binding Label}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+      </StackPanel>
+      <TextBlock Text="{Binding Status}" FontFamily="{StaticResource SerifFont}" FontSize="22" />
+      <TextBlock Text="Reading the file…" Classes="muted" IsVisible="{Binding Busy}" />
+      <Border Classes="card">
+        <TextBlock Text="{Binding Preview}" TextWrapping="Wrap" />
+      </Border>
+      <TextBlock Text="{Binding Error}" Classes="problem" TextWrapping="Wrap" IsVisible="{Binding Error, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+      <Button Content="Import into the catalog" Command="{Binding ImportCommand}" Classes="primary" HorizontalAlignment="Left" IsEnabled="{Binding CanImport}" IsVisible="{Binding !ConfirmReplace}" />
+      <Button Content="Replace the sample library" Command="{Binding ImportCommand}" Classes="primary" HorizontalAlignment="Left" IsEnabled="{Binding CanImport}" IsVisible="{Binding ConfirmReplace}" />
+
+      <Border Classes="card" Margin="0,12,0,0" DataContext="{Binding Backup}">
+        <StackPanel Spacing="12" x:DataType="vm:BackupViewModel">
+          <TextBlock FontFamily="{StaticResource SerifFont}" FontSize="22" Text="Back up your library" />
+          <TextBlock TextWrapping="Wrap" Text="Save one zip of the catalog, every cover, your tags, ratings, notes, shelves, and settings. Put it on a thumb drive so a failed disk is not the end of the library." />
+          <TextBlock Classes="muted" TextWrapping="Wrap" Text="Plug in the thumb drive first, and the save window opens on it." />
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Content="Save a backup" Command="{Binding SaveBackupCommand}" Classes="primary" IsEnabled="{Binding !Busy}" />
+            <Button Content="Restore a backup" Command="{Binding ChooseRestoreCommand}" IsEnabled="{Binding !Busy}" />
+          </StackPanel>
+          <TextBlock Classes="muted" Text="{Binding BusyText}" IsVisible="{Binding Busy}" />
+          <SelectableTextBlock Text="{Binding Message}" TextWrapping="Wrap" IsVisible="{Binding Message, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+          <TextBlock Text="{Binding Error}" Classes="problem" TextWrapping="Wrap" IsVisible="{Binding Error, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+          <StackPanel Spacing="8" IsVisible="{Binding Confirming}">
+            <TextBlock FontFamily="{StaticResource SerifFont}" FontSize="20" Text="Replace this library with the backup?" />
+            <TextBlock Text="{Binding ConfirmDetail}" TextWrapping="Wrap" />
+            <TextBlock Classes="muted" Text="{Binding ConfirmWarning}" TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Content="Replace my library" Command="{Binding RestoreCommand}" Classes="primary" IsEnabled="{Binding !Busy}" />
+              <Button Content="Cancel" Command="{Binding CancelRestoreCommand}" Classes="quiet" />
+            </StackPanel>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

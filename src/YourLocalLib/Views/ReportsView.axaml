@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:YourLocalLib.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             x:Class="YourLocalLib.Views.ReportsView"
+             x:DataType="vm:ReportsViewModel">
+  <Grid Margin="40,32" RowDefinitions="Auto,*">
+    <StackPanel Spacing="8">
+      <TextBlock Classes="section" Text="Reports" />
+      <TextBlock Text="{Binding Summary}" TextWrapping="Wrap" />
+      <TextBlock Text="{Binding Error}" Classes="problem" IsVisible="{Binding Error, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+      <WrapPanel Orientation="Horizontal">
+        <Button Content="Export catalog" Command="{Binding ExportCatalogCommand}" Classes="primary" Margin="0,0,8,8" />
+        <Button Content="Export add-to-Libib" Command="{Binding ExportUnknownsCommand}" Margin="0,0,8,8" />
+        <Button Content="Export this shelf's gaps" Command="{Binding ExportShelfCommand}" Margin="0,0,8,8" />
+      </WrapPanel>
+    </StackPanel>
+
+    <ScrollViewer Grid.Row="1" Margin="0,12,0,0">
+      <StackPanel Spacing="20" MaxWidth="760" HorizontalAlignment="Left">
+        <TextBlock Classes="muted" TextWrapping="Wrap" IsVisible="{Binding Empty}" Text="The catalog is empty, so these lists have nothing to compare. Import a Libib CSV or try the sample library from Scan." />
+        <Grid ColumnDefinitions="Auto,*">
+          <TextBlock Text="Shelf" FontFamily="{StaticResource SerifFont}" FontSize="20" VerticalAlignment="Center" />
+          <ComboBox Grid.Column="1" Margin="12,0,0,0" ItemsSource="{Binding Shelves}" SelectedItem="{Binding Shelf}" PlaceholderText="No shelves yet" MinWidth="280" HorizontalAlignment="Left">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:ShelfChoice">
+                <TextBlock Text="{Binding Label}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </Grid>
+        <StackPanel Spacing="6">
+          <TextBlock Text="Not scanned on this shelf" FontFamily="{StaticResource SerifFont}" FontSize="20" />
+          <TextBlock Classes="muted" Text="Copies recorded on this shelf that this session has not confirmed, placed, or moved here. Other shelves are not treated as missing from the library." />
+          <ItemsControl ItemsSource="{Binding NotScanned}" />
+        </StackPanel>
+        <StackPanel Spacing="6">
+          <TextBlock Text="Seen here, recorded elsewhere" FontFamily="{StaticResource SerifFont}" FontSize="20" />
+          <TextBlock Classes="muted" Text="You scanned these while standing at this shelf, and the recorded location was left unchanged." />
+          <ItemsControl ItemsSource="{Binding SeenElsewhere}" />
+        </StackPanel>
+        <StackPanel Spacing="6">
+          <TextBlock Text="Extras this session" FontFamily="{StaticResource SerifFont}" FontSize="20" />
+          <ItemsControl ItemsSource="{Binding ExtraRows}" />
+        </StackPanel>
+        <StackPanel Spacing="6">
+          <TextBlock Text="Not seen in the last whole-library audit" FontFamily="{StaticResource SerifFont}" FontSize="20" />
+          <TextBlock Classes="muted" Text="This list is written only when you press Finish audit. Closing the window leaves it unchanged." />
+          <ItemsControl ItemsSource="{Binding UnseenLibrary}" />
+        </StackPanel>
+        <StackPanel Spacing="6">
+          <TextBlock Text="Not in the Libib export" FontFamily="{StaticResource SerifFont}" FontSize="20" />
+          <TextBlock Classes="muted" Text="Scanned barcodes that did not match the catalog. Export them and add the ones you want to keep in Libib." />
+          <ItemsControl ItemsSource="{Binding UnknownRows}" />
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

@@ -1,0 +1,92 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:YourLocalLib.ViewModels"
+        xmlns:views="using:YourLocalLib.Views"
+        x:Class="YourLocalLib.MainWindow"
+        x:DataType="vm:ShellViewModel"
+        Title="Your Local Lib"
+        Width="1180"
+        Height="780"
+        MinWidth="880"
+        MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        Icon="avares://YourLocalLib/Assets/icon.png">
+  <Grid ColumnDefinitions="220,*">
+    <Border Classes="rail">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Bottom" Spacing="8">
+          <Button Classes="nav" Classes.selected="{Binding IsSettings}" Command="{Binding ShowSettingsCommand}" Content="Settings" />
+          <Button Classes="support" Margin="0,8,0,0" Click="OnSupportClick"
+                  ToolTip.Tip="Opens Patreon in your web browser"
+                  AutomationProperties.Name="Support me on Patreon">
+            <StackPanel Orientation="Horizontal" Spacing="7">
+              <PathIcon Data="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z" />
+              <TextBlock Text="Support me on Patreon" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <TextBlock Classes="muted" Text="Version 1.4.1" Margin="14,0,0,4" />
+        </StackPanel>
+        <StackPanel Spacing="4">
+          <TextBlock Classes="wordmark" Text="Your Local" />
+          <TextBlock Classes="muted" Text="Lib" Margin="0,0,0,20" />
+          <Button Classes="nav" Classes.selected="{Binding IsScan}" Command="{Binding ShowScanCommand}" Content="Scan" />
+          <Button Classes="nav" Classes.selected="{Binding IsLibrary}" Command="{Binding ShowLibraryCommand}" HorizontalContentAlignment="Stretch"
+                  ToolTip.Tip="Titles listed on Library with its current search and filters. Each copy counts.">
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Text="Library" />
+              <TextBlock Grid.Column="1" Margin="8,0,0,0" Opacity="0.75" Text="{Binding Library.ShownCount, StringFormat={}{0:N0}}" IsVisible="{Binding !Library.Empty}" />
+            </Grid>
+          </Button>
+          <Button Classes="nav" Classes.selected="{Binding IsShelves}" Command="{Binding ShowShelvesCommand}" Content="Shelves" />
+          <Button Classes="nav" Classes.selected="{Binding IsImport}" Command="{Binding ShowImportCommand}" Content="Import" />
+          <Button Classes="nav" Classes.selected="{Binding IsReports}" Command="{Binding ShowReportsCommand}" Content="Reports" />
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <Panel Grid.Column="1">
+      <ContentControl Content="{Binding Scan}" IsVisible="{Binding IsScan}">
+        <ContentControl.ContentTemplate>
+          <DataTemplate x:DataType="vm:ScanViewModel">
+            <views:ScanView />
+          </DataTemplate>
+        </ContentControl.ContentTemplate>
+      </ContentControl>
+      <ContentControl Content="{Binding Library}" IsVisible="{Binding IsLibrary}">
+        <ContentControl.ContentTemplate>
+          <DataTemplate x:DataType="vm:LibraryViewModel">
+            <views:LibraryView />
+          </DataTemplate>
+        </ContentControl.ContentTemplate>
+      </ContentControl>
+      <ContentControl Content="{Binding Shelves}" IsVisible="{Binding IsShelves}">
+        <ContentControl.ContentTemplate>
+          <DataTemplate x:DataType="vm:ShelvesViewModel">
+            <views:ShelvesView />
+          </DataTemplate>
+        </ContentControl.ContentTemplate>
+      </ContentControl>
+      <ContentControl Content="{Binding Import}" IsVisible="{Binding IsImport}">
+        <ContentControl.ContentTemplate>
+          <DataTemplate x:DataType="vm:ImportViewModel">
+            <views:ImportView />
+          </DataTemplate>
+        </ContentControl.ContentTemplate>
+      </ContentControl>
+      <ContentControl Content="{Binding Reports}" IsVisible="{Binding IsReports}">
+        <ContentControl.ContentTemplate>
+          <DataTemplate x:DataType="vm:ReportsViewModel">
+            <views:ReportsView />
+          </DataTemplate>
+        </ContentControl.ContentTemplate>
+      </ContentControl>
+      <ContentControl Content="{Binding Settings}" IsVisible="{Binding IsSettings}">
+        <ContentControl.ContentTemplate>
+          <DataTemplate x:DataType="vm:SettingsViewModel">
+            <views:SettingsView />
+          </DataTemplate>
+        </ContentControl.ContentTemplate>
+      </ContentControl>
+    </Panel>
+  </Grid>
+</Window>

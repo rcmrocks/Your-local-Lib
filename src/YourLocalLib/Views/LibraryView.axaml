@@ -1,0 +1,240 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:YourLocalLib.ViewModels"
+             xmlns:core="using:YourLocalLib.Core"
+             xmlns:views="using:YourLocalLib.Views"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             x:Class="YourLocalLib.Views.LibraryView"
+             x:DataType="vm:LibraryViewModel">
+  <Grid Margin="32,28" RowDefinitions="Auto,Auto,*">
+    <StackPanel Spacing="4">
+      <TextBlock Classes="section" Text="Library" />
+      <TextBlock Classes="muted" Text="Search, type, shelf, and rating sit on one row. Details stay as you saved them. Opening a book can fill a missing cover, description, and a few subject tags from its ISBN. An album uses MusicBrainz. Movies, video games, and board games keep what you imported." />
+    </StackPanel>
+
+    <Grid Grid.Row="1" Margin="0,16,0,0" ColumnDefinitions="*,260,160" IsVisible="{Binding !Empty}">
+      <TextBox x:Name="LibrarySearch" Watermark="Title, creator, description, tag, ISBN, UPC, or shelf" Text="{Binding Query}" />
+      <ComboBox Grid.Column="1" Margin="8,0,0,0" ItemsSource="{Binding Filters}" SelectedItem="{Binding Filter}" HorizontalAlignment="Stretch">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:ShelfChoice">
+            <TextBlock Text="{Binding Label}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      <ComboBox Grid.Column="2" Margin="8,0,0,0" ItemsSource="{Binding RatingFilters}" SelectedItem="{Binding RatingFilter}" HorizontalAlignment="Stretch">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:RatingChoice">
+            <TextBlock Text="{Binding Label}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+    </Grid>
+
+    <Grid Grid.Row="2" Margin="0,16,0,0" ColumnDefinitions="360,*" IsVisible="{Binding !Empty}">
+      <ListBox ItemsSource="{Binding Rows}" SelectedItem="{Binding Selected}"
+               ScrollViewer.VerticalScrollBarVisibility="Auto"
+               ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="core:CatalogRow">
+            <StackPanel Spacing="2" Margin="4,6">
+              <TextBlock Text="{Binding Title}" FontFamily="{StaticResource SerifFont}" FontSize="18" TextWrapping="Wrap" />
+              <TextBlock Classes="muted" Text="{Binding KindLabel}" />
+              <TextBlock Classes="muted" Text="{Binding Creators}" />
+              <TextBlock Classes="muted" Text="{Binding ShelfPath, TargetNullValue=Unlocated}" />
+              <TextBlock Classes="muted" Text="{Binding ListMarks}" IsVisible="{Binding ListMarks, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <ScrollViewer Grid.Column="1" Margin="20,0,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Border Classes="card" MaxWidth="760" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+          <StackPanel Spacing="18">
+            <Grid ColumnDefinitions="*,Auto">
+              <SelectableTextBlock Text="{Binding DetailTitle}" FontFamily="{StaticResource SerifFont}" FontSize="30" TextWrapping="Wrap" VerticalAlignment="Center" />
+              <Button Grid.Column="1" Margin="16,0,0,0" Content="Edit" Command="{Binding BeginEditCommand}" Classes="primary" VerticalAlignment="Top" IsVisible="{Binding ShowEditButton}" />
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding HasSelection}">
+              <StackPanel Spacing="8">
+                <Border Classes="cover">
+                  <Grid>
+                    <TextBlock Text="{Binding CoverPlaceholder}" Classes="muted" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding !HasCover}" />
+                    <Image Source="{Binding Cover}" Stretch="UniformToFill" IsVisible="{Binding HasCover}" />
+                  </Grid>
+                </Border>
+                <Button Content="Choose cover" Command="{Binding ChooseCoverCommand}" IsVisible="{Binding Editing}" HorizontalAlignment="Stretch" />
+                <Button Content="Remove cover" Command="{Binding RemoveCoverCommand}" Classes="quiet" IsVisible="{Binding Editing}" IsEnabled="{Binding HasCover}" HorizontalAlignment="Stretch" />
+                <Button Content="Look up again" Command="{Binding LookUpAgainCommand}" Classes="quiet" IsVisible="{Binding ShowLookUpAgain}" HorizontalAlignment="Stretch"
+                        ToolTip.Tip="Ask the matching catalog again for a missing cover, description, or tags" />
+                <TextBlock Classes="muted" Text="{Binding LookupNote}" MaxWidth="168" TextAlignment="Center"
+                           IsVisible="{Binding LookupNote, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+              </StackPanel>
+              <StackPanel Grid.Column="1" Margin="24,4,0,0" Spacing="8">
+                <SelectableTextBlock Classes="author" Text="{Binding DetailAuthor}" />
+                <SelectableTextBlock Classes="muted" Text="{Binding DetailMeta}" FontSize="14" />
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <SelectableTextBlock Classes="muted" Text="{Binding DetailIsbn}" FontSize="14" VerticalAlignment="Center" />
+                  <Button Content="{Binding CopyIsbnLabel}" Command="{Binding CopyIsbnCommand}" Classes="quiet" Padding="6,2" FontSize="13"
+                          VerticalAlignment="Center" IsVisible="{Binding HasIsbn}" ToolTip.Tip="Copy the barcode digits" />
+                </StackPanel>
+              </StackPanel>
+            </Grid>
+
+            <StackPanel Spacing="12" IsVisible="{Binding !Editing}">
+              <SelectableTextBlock Text="{Binding DetailExtras}" TextWrapping="Wrap" Classes="muted" IsVisible="{Binding HasExtras}" />
+              <SelectableTextBlock Text="{Binding DetailDescription}" TextWrapping="Wrap" FontSize="16" LineHeight="24" Classes.muted="{Binding DescriptionIsPlaceholder}" />
+              <StackPanel Spacing="4" IsVisible="{Binding HasNotes}">
+                <TextBlock Text="Notes" FontFamily="{StaticResource SerifFont}" FontSize="18" />
+                <SelectableTextBlock Text="{Binding DetailNotes}" TextWrapping="Wrap" />
+              </StackPanel>
+              <SelectableTextBlock Text="{Binding DetailLibib}" Classes="muted" TextWrapping="Wrap" IsVisible="{Binding HasLibib}" />
+            </StackPanel>
+
+            <StackPanel Spacing="12" IsVisible="{Binding Editing}">
+              <TextBlock Classes="muted" Text="Saving keeps this title, description, and cover the next time you import from Libib." />
+              <TextBlock Classes="muted" Text="Type" />
+              <ComboBox ItemsSource="{Binding KindChoices}" SelectedItem="{Binding EditKind}" MaxWidth="280" HorizontalAlignment="Left">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:KindChoice">
+                    <TextBlock Text="{Binding Label}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+              <TextBlock Classes="muted" Text="Title" />
+              <TextBox Text="{Binding EditTitle}" />
+              <TextBlock Classes="muted" Text="{Binding CreatorLabel}" />
+              <TextBox Text="{Binding EditCreators}" />
+              <Grid ColumnDefinitions="*,*">
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="muted" Text="Series" />
+                  <TextBox Text="{Binding EditSeries}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="12,0,0,0" Spacing="4">
+                  <TextBlock Classes="muted" Text="Publisher" />
+                  <TextBox Text="{Binding EditPublisher}" />
+                </StackPanel>
+              </Grid>
+              <TextBlock Classes="muted" Text="Published" />
+              <TextBox Text="{Binding EditPublished}" MinWidth="220" HorizontalAlignment="Left" />
+              <Grid ColumnDefinitions="*,*" IsVisible="{Binding ShowMovieFields}">
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="muted" Text="Cast" />
+                  <TextBox Text="{Binding EditEnsemble}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="12,0,0,0" Spacing="4">
+                  <TextBlock Classes="muted" Text="Aspect ratio" />
+                  <TextBox Text="{Binding EditAspect}" />
+                </StackPanel>
+              </Grid>
+              <TextBlock Classes="muted" Text="Length" IsVisible="{Binding ShowMusicFields}" />
+              <TextBox Text="{Binding EditLength}" IsVisible="{Binding ShowMusicFields}" />
+              <TextBlock Classes="muted" Text="Discs" IsVisible="{Binding ShowMusicFields}" />
+              <TextBox Text="{Binding EditDiscs}" MinWidth="120" HorizontalAlignment="Left" IsVisible="{Binding ShowMusicFields}" />
+              <TextBlock Classes="muted" Text="ESRB" IsVisible="{Binding ShowGameFields}" />
+              <TextBox Text="{Binding EditEsrb}" MinWidth="120" HorizontalAlignment="Left" IsVisible="{Binding ShowGameFields}" />
+              <Grid ColumnDefinitions="*,*" IsVisible="{Binding ShowBoardFields}">
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="muted" Text="Players" />
+                  <TextBox Text="{Binding EditPlayers}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="12,0,0,0" Spacing="4">
+                  <TextBlock Classes="muted" Text="Age group" />
+                  <TextBox Text="{Binding EditAge}" />
+                </StackPanel>
+              </Grid>
+              <TextBlock Classes="muted" Text="Artists" IsVisible="{Binding ShowBoardFields}" />
+              <TextBox Text="{Binding EditArtists}" IsVisible="{Binding ShowBoardFields}" />
+              <TextBlock Classes="muted" Text="Runtime or pages" IsVisible="{Binding ShowMovieFields}" />
+              <TextBox Text="{Binding EditLength}" IsVisible="{Binding ShowMovieFields}" />
+              <TextBlock Classes="muted" Text="Discs" IsVisible="{Binding ShowMovieFields}" />
+              <TextBox Text="{Binding EditDiscs}" MinWidth="120" HorizontalAlignment="Left" IsVisible="{Binding ShowMovieFields}" />
+              <TextBlock Classes="muted" Text="Description" />
+              <TextBox Text="{Binding EditDescription}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="120" />
+              <TextBlock Classes="muted" Text="Notes" />
+              <TextBox Text="{Binding EditNotes}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" />
+              <StackPanel Spacing="8" IsVisible="{Binding NeedsIsbn}">
+                <TextBlock Text="This title has no barcode" FontFamily="{StaticResource SerifFont}" FontSize="18" />
+                <TextBlock Classes="muted" Text="Type the ISBN or UPC from the copy in hand. It is saved only when you press Add barcode." />
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBox Watermark="{Binding CodeLabel}" Text="{Binding IsbnText}" />
+                  <Button Grid.Column="1" Margin="8,0,0,0" Content="Add barcode" Command="{Binding AttachIsbnCommand}" VerticalAlignment="Center" />
+                </Grid>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="Save details" Command="{Binding SaveDetailsCommand}" Classes="primary" />
+                <Button Content="Cancel" Command="{Binding CancelEditCommand}" Classes="quiet" />
+              </StackPanel>
+            </StackPanel>
+
+            <TextBlock Text="{Binding Error}" Classes="problem" TextWrapping="Wrap" IsVisible="{Binding Error, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+
+            <StackPanel Spacing="14" IsVisible="{Binding HasSelection}">
+              <CheckBox Content="{Binding DoneLabel}" IsChecked="{Binding IsRead}" FontFamily="{StaticResource SerifFont}" FontSize="18" />
+              <StackPanel Spacing="8" IsVisible="{Binding IsRead}">
+                <TextBlock Text="Your rating" FontFamily="{StaticResource SerifFont}" FontSize="18" />
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                  <views:StarRating Rating="{Binding UserRating}" SetRatingCommand="{Binding SetRatingCommand}" VerticalAlignment="Center" />
+                  <Button Content="Clear" Command="{Binding ClearRatingCommand}" Classes="quiet" IsEnabled="{Binding HasUserRating}" VerticalAlignment="Center" />
+                </StackPanel>
+              </StackPanel>
+            </StackPanel>
+
+            <StackPanel Spacing="8" IsVisible="{Binding HasSelection}">
+              <TextBlock Text="Your tags" FontFamily="{StaticResource SerifFont}" FontSize="18" />
+              <ItemsControl ItemsSource="{Binding Tags}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:TagChip">
+                    <Border Background="{DynamicResource PaperBrush}" BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="1" CornerRadius="14" Padding="10,4" Margin="0,0,8,8">
+                      <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                        <Button Content="Remove" Command="{Binding RemoveCommand}" Classes="quiet" Padding="6,2" FontSize="13" />
+                      </StackPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <Grid ColumnDefinitions="*,Auto">
+                <TextBox x:Name="TagBox" Watermark="Tag, or several separated by commas" Text="{Binding TagDraft, UpdateSourceTrigger=PropertyChanged}" KeyDown="TagBoxKeyDown" />
+                <Button Grid.Column="1" Margin="8,0,0,0" Content="Add tag" Command="{Binding AddTagCommand}" Classes="primary" VerticalAlignment="Center" />
+              </Grid>
+            </StackPanel>
+
+            <StackPanel Spacing="8" IsVisible="{Binding HasSelection}">
+              <TextBlock Text="Shelf" FontFamily="{StaticResource SerifFont}" FontSize="18" />
+              <Grid ColumnDefinitions="*,Auto,Auto">
+                <ComboBox ItemsSource="{Binding Shelves}" SelectedItem="{Binding ShelfForCopy}" PlaceholderText="Unlocated" HorizontalAlignment="Stretch">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="core:LocationInfo">
+                      <TextBlock Text="{Binding Path}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button Grid.Column="1" Margin="8,0,0,0" Content="Save shelf" Command="{Binding SaveShelfCommand}" Classes="primary" VerticalAlignment="Center" />
+                <Button Grid.Column="2" Margin="8,0,0,0" Content="Clear shelf" Command="{Binding LeaveUnlocatedCommand}" Classes="quiet" VerticalAlignment="Center" />
+              </Grid>
+            </StackPanel>
+
+            <StackPanel Spacing="8" IsVisible="{Binding HasSelection}">
+              <Button Content="Delete from library" Command="{Binding AskDeleteCommand}" HorizontalAlignment="Left" IsVisible="{Binding !ConfirmingDelete}" />
+              <StackPanel Orientation="Horizontal" Spacing="12" IsVisible="{Binding ConfirmingDelete}">
+                <TextBlock Text="Delete this title?" VerticalAlignment="Center" />
+                <Button Content="Delete" Command="{Binding DeleteBookCommand}" VerticalAlignment="Center" />
+                <Button Content="Cancel" Command="{Binding CancelDeleteCommand}" Classes="quiet" VerticalAlignment="Center" />
+              </StackPanel>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </ScrollViewer>
+    </Grid>
+
+    <StackPanel Grid.Row="2" Spacing="8" Margin="0,28,0,0" IsVisible="{Binding Empty}" MaxWidth="560">
+      <TextBlock Classes="section" Text="The catalog is empty" FontSize="28" />
+      <TextBlock Classes="muted" Text="Import a Libib collection CSV of books, movies, music, video games, or board games, or open Scan and try the sample library. Search will list every copy once a catalog is here." />
+    </StackPanel>
+  </Grid>
+</UserControl>

@@ -1,0 +1,119 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:YourLocalLib.ViewModels"
+             xmlns:core="using:YourLocalLib.Core"
+             x:Class="YourLocalLib.Views.ScanView"
+             x:DataType="vm:ScanViewModel"
+             x:Name="ScanRoot">
+  <Grid Margin="40,32" RowDefinitions="Auto,*">
+    <StackPanel Spacing="16">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Button Content="Place" Command="{Binding ChooseModeCommand}" CommandParameter="place" Classes.selected="{Binding IsPlace}" Classes="mode" />
+          <Button Content="Shelf audit" Command="{Binding ChooseModeCommand}" CommandParameter="shelf" Classes.selected="{Binding IsShelfMode}" Classes="mode" />
+          <Button Content="Whole library" Command="{Binding ChooseModeCommand}" CommandParameter="library" Classes.selected="{Binding IsLibraryMode}" Classes="mode" />
+        </StackPanel>
+        <Button Grid.Column="1" Content="Finish audit" Command="{Binding FinishCommand}" Classes="primary" IsVisible="{Binding CanFinish}" />
+      </Grid>
+      <Grid ColumnDefinitions="Auto,Auto,*,Auto" IsVisible="{Binding !ShowEmpty}">
+        <ComboBox ItemsSource="{Binding Kinds}" SelectedItem="{Binding SelectedKind}" MinWidth="150" HorizontalAlignment="Left"
+                  ToolTip.Tip="New barcodes are saved as this type. A barcode already in the catalog keeps the type it has.">
+          <ComboBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:KindChoice">
+              <TextBlock Text="{Binding Label}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <ComboBox Grid.Column="1" Margin="12,0,0,0" ItemsSource="{Binding Shelves}" SelectedItem="{Binding SelectedShelf}" PlaceholderText="Choose a shelf" MinWidth="260" HorizontalAlignment="Left"
+                  DropDownClosed="ShelfPickerClosed">
+          <ComboBox.ItemTemplate>
+            <DataTemplate x:DataType="core:LocationInfo">
+              <TextBlock Text="{Binding Path}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="16,0,0,0" Classes="muted" Text="{Binding ShelfLabel}" TextTrimming="CharacterEllipsis" />
+        <CheckBox Grid.Column="3" Margin="16,0,0,0" VerticalAlignment="Center" Content="Move without asking"
+                  IsChecked="{Binding AutoMove}" IsVisible="{Binding IsShelfMode}"
+                  ToolTip.Tip="A title recorded on another shelf moves to this one, and a title with no shelf is placed here. Ctrl+Z puts the last one back." />
+      </Grid>
+      <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource ProblemBrush}" BorderThickness="1" Padding="16" CornerRadius="6" IsVisible="{Binding ModeConfirm}">
+        <StackPanel Spacing="8">
+          <TextBlock Text="Start a new session?" FontFamily="{StaticResource SerifFont}" FontSize="20" />
+          <TextBlock Classes="muted" Text="The current session stays unfinished. Nothing is marked missing." />
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Content="Start new session" Command="{Binding ConfirmNewSessionCommand}" Classes="primary" />
+            <Button Content="Stay" Command="{Binding StayInSessionCommand}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+
+    <ScrollViewer Grid.Row="1" Margin="0,8,0,0">
+      <StackPanel MaxWidth="760" HorizontalAlignment="Center" Spacing="20">
+        <Border Classes="card" x:Name="ResultCard">
+          <Border.Transitions>
+            <Transitions>
+              <DoubleTransition Property="Opacity" Duration="0:0:0.12" />
+            </Transitions>
+          </Border.Transitions>
+          <Grid ColumnDefinitions="Auto,*">
+            <Border Classes="cover">
+              <Grid>
+                <TextBlock Text="{Binding Headline}" FontFamily="{StaticResource SerifFont}" FontSize="22" TextWrapping="Wrap" Margin="12" VerticalAlignment="Center" IsVisible="{Binding !HasCover}" />
+                <Image Source="{Binding Cover}" Stretch="UniformToFill" IsVisible="{Binding HasCover}" />
+              </Grid>
+            </Border>
+            <StackPanel Grid.Column="1" Margin="28,0,0,0" Spacing="12" VerticalAlignment="Center">
+              <TextBlock Classes="hero" Text="{Binding Headline}" />
+              <TextBlock Classes="author" Text="{Binding Author}" />
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Ellipse Width="8" Height="8" VerticalAlignment="Center" Classes.problem="{Binding IsProblem}" Classes.ok="{Binding !IsProblem}" />
+                <TextBlock Text="{Binding Status}" FontSize="16" />
+              </StackPanel>
+              <TextBlock Text="{Binding Detail}" TextWrapping="Wrap" Classes="muted" FontSize="15" />
+              <TextBlock Text="Looking up cover and details…" Classes="muted" IsVisible="{Binding LookingUp}" />
+            </StackPanel>
+          </Grid>
+        </Border>
+
+        <TextBlock Classes="muted" Text="{Binding CountLine}" HorizontalAlignment="Center" IsVisible="{Binding !ShowEmpty}" />
+        <TextBlock Text="{Binding Error}" Classes="problem" HorizontalAlignment="Center" />
+
+        <StackPanel Spacing="12" IsVisible="{Binding ShowEmpty}">
+          <TextBlock Classes="muted" Text="On the Libib website, open Settings and choose Export Collection Data. Save the CSV, then import it here." />
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Content="Import your Libib CSV" Command="{Binding GoImportCommand}" Classes="primary" />
+            <Button Content="Try a sample library" Command="{Binding LoadSampleCommand}" />
+          </StackPanel>
+        </StackPanel>
+
+        <StackPanel Spacing="8" IsVisible="{Binding !ShowEmpty}">
+          <TextBox x:Name="ScanBox" Watermark="Scan or type an ISBN or UPC, then Enter" FontSize="18" />
+          <WrapPanel Orientation="Horizontal">
+            <Button Content="{Binding PromptYes}" Command="{Binding AcceptCommand}" Classes="primary" IsVisible="{Binding HasPrompt}" Margin="0,0,8,8" />
+            <Button Content="Not now" Command="{Binding DeclineCommand}" IsVisible="{Binding HasPrompt}" Margin="0,0,8,8" />
+            <Button Content="Undo last scan" Command="{Binding UndoCommand}" Margin="0,0,8,8" />
+            <Button Content="Retry lookup" Command="{Binding RetryCommand}" IsVisible="{Binding CanRetry}" Margin="0,0,8,8" />
+          </WrapPanel>
+          <TextBlock Classes="muted" Text="Enter scans.  Y moves or places.  N leaves it.  Ctrl+Z undoes.  Ctrl+F searches.  Esc clears." />
+          <Border Margin="0,8,0,0" Padding="16" CornerRadius="8" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="1">
+            <StackPanel Spacing="8">
+              <TextBlock Text="Stored scans" FontFamily="{StaticResource SerifFont}" FontSize="18" />
+              <TextBlock Classes="muted" Text="Click this box before the scanner uploads its memory. One ISBN or UPC per line, then add them. A double-read delay is not used here." />
+              <TextBox x:Name="DumpBox" AcceptsReturn="True" MinHeight="72" Watermark="978… or UPC" TextWrapping="Wrap" />
+              <Button Content="Add stored scans" Click="AddDumpClick" HorizontalAlignment="Left" />
+            </StackPanel>
+          </Border>
+          <ItemsControl ItemsSource="{Binding Recent}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String">
+                <TextBlock Text="{Binding}" Classes="muted" Margin="0,2" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

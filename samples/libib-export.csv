@@ -1,0 +1,9 @@
+id,item_type,title,creators,first_name,last_name,collection,ean_isbn13,upc_isbn10,description,publisher,publish_date,group,tags,notes,price,length,number_of_discs,number_of_players,age_group,ensemble,aspect_ratio,esrb,rating,review,review_date,status,began,completed,added,copies
+aaa1111111,book,Quoted Title,Ada Lovelace,Ada,Lovelace,Test Collection,9780141439518,0141439513,"Line one
+Line two, still quoted",Penguin,2003-01-01,Classics,novel,,,,,,,,,,,,,,,,2026-03-09,1
+aaa1111111b,book,Quoted Title paperback,Ada Lovelace,Ada,Lovelace,Test Collection,9780141439518,0141439513,Shorter,Penguin,2003-01-01,Classics,,,,,,,,,,,,,,,,,2026-03-09,2
+bbb2222222,book,Conflicting Ten,Diana Gabaldon,Diana,Gabaldon,Test Collection,9780440224259,0044022425,The ten is valid but a different book,Dell,1997-01-01,,,,,,,,,,,,,,,,,,2026-03-09,1
+ccc3333333,book,Only Thirteen,A. Writer,A.,Writer,Test Collection,9791234567896,,A 979 book,Pub,2020-01-01,,,,,,,,,,,,,,,,,,2026-03-09,1
+ddd4444444,book,Omnibus Sample,N. Nobody,N.,Nobody,Test Collection,,,No isbn here,Pub,2020-01-01,,,,,,,,,,,,,,,,,,2026-03-09,1
+eee5555555,movie,Not a Book,Director,D.,Director,Test Collection,9780000000019,,skip me,Pub,2020-01-01,,,,,,,,,,,,,,,,,,2026-03-09,1
+fff6666666,book,Bad Ten Beside Good Thirteen,J. K. Rowling,J.,Rowling,Test Collection,9780439203524,0043920352,ISBN-10 fails its check,Scholastic,1998-01-01,,,,,,,,,,,,,,,,,,2026-03-09,

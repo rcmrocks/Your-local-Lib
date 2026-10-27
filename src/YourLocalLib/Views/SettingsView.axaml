@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:YourLocalLib.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             x:Class="YourLocalLib.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+  <ScrollViewer Margin="40,32">
+    <StackPanel Spacing="18" MaxWidth="640" HorizontalAlignment="Left">
+      <TextBlock Classes="section" Text="Settings" />
+      <TextBlock TextWrapping="Wrap" Text="Speech and the lamp-lit theme apply as soon as you change them. The scan delay, the backup folder, and the Google Books key are kept when you press Save." />
+      <ToggleSwitch IsChecked="{Binding Speech}" Content="Speak when a scan needs attention" />
+      <TextBlock Classes="muted" Text="A match plays a short chime. Speech is reserved for a missing shelf, a book that is not in the catalog, an extra copy, and a question about moving or placing. With Move without asking ticked, it says “Moved” or “Placed” instead of asking." />
+      <StackPanel Spacing="6">
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock Text="Double-scan delay" FontFamily="{StaticResource SerifFont}" FontSize="18" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Classes="muted" Text="{Binding Delay, StringFormat={}{0:0} ms}" VerticalAlignment="Center" />
+        </Grid>
+        <TextBlock Classes="muted" Text="A second live scan of the same ISBN inside this window is held, not recorded. Stored-scanner dumps are never delayed. 50 to 5000 milliseconds." />
+        <Slider Minimum="50" Maximum="5000" Value="{Binding Delay}" />
+      </StackPanel>
+      <ToggleSwitch IsChecked="{Binding Dark}" Content="Lamp-lit study" />
+      <StackPanel Spacing="6">
+        <TextBlock Text="Backup folder" FontFamily="{StaticResource SerifFont}" FontSize="18" />
+        <TextBlock Classes="muted" TextWrapping="Wrap" Text="Leave this blank to keep ten automatic database copies beside the catalog. A full zip with covers lives on Import, under Save a backup. The database itself lives in %LOCALAPPDATA%\YourLocalLib\library.db and is not removed by the uninstaller." />
+        <TextBox Watermark="Folder for library backups" Text="{Binding BackupFolder}" />
+      </StackPanel>
+      <StackPanel Spacing="6">
+        <TextBlock Text="Google Books key" FontFamily="{StaticResource SerifFont}" FontSize="18" />
+        <TextBlock Classes="muted" TextWrapping="Wrap" Text="Optional. Covers, descriptions, and tags come from Open Library first. Google Books fills what is still missing, but without a key it shares one daily allowance with everyone and often refuses. A free key from the Google Cloud console allows 1,000 lookups a day." />
+        <TextBox Watermark="Paste a key, or leave this blank" Text="{Binding GoogleBooksKey}" />
+      </StackPanel>
+      <Button Content="Save" Command="{Binding SaveCommand}" Classes="primary" HorizontalAlignment="Left" />
+      <TextBlock Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

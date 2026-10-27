@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:YourLocalLib.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             x:Class="YourLocalLib.Views.ShelvesView"
+             x:DataType="vm:ShelvesViewModel">
+  <Grid Margin="40,32" RowDefinitions="Auto,*">
+    <StackPanel Spacing="6">
+      <TextBlock Classes="section" Text="Shelves" />
+      <TextBlock Classes="muted" Text="Nest a shelf under a bookcase. Hide folds the shelves inside it. The list scrolls. Each shelf gets a code such as LOC-0007. Print the QR and scan it to switch shelves without touching the keyboard." />
+    </StackPanel>
+
+    <Grid Grid.Row="1" Margin="0,20,0,0" ColumnDefinitions="*,360">
+      <Grid RowDefinitions="*,Auto">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Top" Classes="muted" Text="No shelves yet. Add the bookcase, then the shelf inside it." IsVisible="{Binding Empty}" Margin="0,0,0,12" />
+          <ListBox ItemsSource="{Binding Shelves}" SelectedItem="{Binding Selected}"
+                   ScrollViewer.VerticalScrollBarVisibility="Auto"
+                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:ShelfRow">
+                <Grid ColumnDefinitions="88,*,Auto" Margin="4,6">
+                  <Button Content="{Binding FoldLabel}" Command="{Binding Toggle}" IsVisible="{Binding HasChildren}" Padding="8,2" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1" Text="{Binding Display}" FontFamily="{StaticResource SerifFont}" FontSize="18" TextWrapping="Wrap" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="2" Margin="12,0,0,0" Text="{Binding Code}" Classes="muted" VerticalAlignment="Center" />
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </DockPanel>
+        <StackPanel Grid.Row="1" Spacing="10" Margin="0,16,0,0">
+          <TextBlock Text="New shelf" FontFamily="{StaticResource SerifFont}" FontSize="18" />
+          <Grid ColumnDefinitions="*,200,Auto">
+            <TextBox Watermark="Shelf name" Text="{Binding NewName}" />
+            <ComboBox Grid.Column="1" Margin="8,0,0,0" ItemsSource="{Binding Parents}" SelectedItem="{Binding NewParent}" PlaceholderText="No parent" HorizontalAlignment="Stretch">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:ShelfChoice">
+                  <TextBlock Text="{Binding Label}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button Grid.Column="2" Margin="8,0,0,0" Content="Add shelf" Command="{Binding AddCommand}" Classes="primary" VerticalAlignment="Center" />
+          </Grid>
+          <TextBlock Text="{Binding Message}" Classes="muted" IsVisible="{Binding Message, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+          <TextBlock Text="{Binding Error}" Classes="problem" IsVisible="{Binding Error, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+          <Button Content="Save shelf labels as PDF" Command="{Binding SaveLabelsCommand}" HorizontalAlignment="Left" />
+        </StackPanel>
+      </Grid>
+
+      <ScrollViewer Grid.Column="1" Margin="28,0,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <Border Classes="card" VerticalAlignment="Top">
+        <StackPanel Spacing="12">
+          <TextBlock Text="Selected shelf" FontFamily="{StaticResource SerifFont}" FontSize="22" />
+          <TextBlock Classes="muted" Text="Choose a shelf in the list to rename it, move it, or remove it. Removing a shelf does not reuse its QR code." />
+          <TextBlock Classes="muted" Text="Name" />
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBox Watermark="Name" Text="{Binding Rename}" />
+            <Button Grid.Column="1" Margin="8,0,0,0" Content="Save name" Command="{Binding SaveNameCommand}" Classes="primary" VerticalAlignment="Center" />
+          </Grid>
+          <TextBlock Classes="muted" Text="Parent" />
+          <Grid ColumnDefinitions="*,Auto">
+            <ComboBox ItemsSource="{Binding Parents}" SelectedItem="{Binding SelectedParent}" PlaceholderText="No parent" HorizontalAlignment="Stretch">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:ShelfChoice">
+                  <TextBlock Text="{Binding Label}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button Grid.Column="1" Margin="8,0,0,0" Content="Save parent" Command="{Binding SaveParentCommand}" VerticalAlignment="Center" />
+          </Grid>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Content="Move up" Command="{Binding MoveCommand}" CommandParameter="up" />
+            <Button Content="Move down" Command="{Binding MoveCommand}" CommandParameter="down" />
+          </StackPanel>
+          <TextBlock Classes="muted" Text="When this shelf is removed, its books go to" />
+          <ComboBox ItemsSource="{Binding Destinations}" SelectedItem="{Binding DeleteDestination}" HorizontalAlignment="Stretch">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:ShelfChoice">
+                <TextBlock Text="{Binding Label}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <Button Content="Remove shelf" Command="{Binding DeleteCommand}" HorizontalAlignment="Left" />
+        </StackPanel>
+      </Border>
+      </ScrollViewer>
+    </Grid>
+  </Grid>
+</UserControl>

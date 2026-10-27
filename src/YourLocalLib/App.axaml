@@ -1,0 +1,62 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="YourLocalLib.App"
+             RequestedThemeVariant="Light">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="PaperBrush" Color="#F4EFE6" />
+          <SolidColorBrush x:Key="CardBrush" Color="#FBF8F3" />
+          <SolidColorBrush x:Key="InkBrush" Color="#1E1A16" />
+          <SolidColorBrush x:Key="MutedBrush" Color="#6B6258" />
+          <SolidColorBrush x:Key="HairlineBrush" Color="#DDD4C6" />
+          <SolidColorBrush x:Key="AccentBrush" Color="#1E4D3A" />
+          <SolidColorBrush x:Key="OnAccentBrush" Color="#FBF8F3" />
+          <SolidColorBrush x:Key="ProblemBrush" Color="#7A3E3E" />
+          <SolidColorBrush x:Key="SelectedBrush" Color="#E3EDE6" />
+          <SolidColorBrush x:Key="SupportBrush" Color="#B4473F" />
+          <SolidColorBrush x:Key="SupportTintBrush" Color="#F6E7E2" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="#1E4D3A" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="#2A5E48" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed" Color="#163A2C" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeChecked" Color="#1E4D3A" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="#2A5E48" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed" Color="#163A2C" />
+          <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="#FBF8F3" />
+          <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" Color="#FBF8F3" />
+          <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" Color="#FBF8F3" />
+          <SolidColorBrush x:Key="TextControlSelectionHighlightColor" Color="#C9DDD0" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="PaperBrush" Color="#221C16" />
+          <SolidColorBrush x:Key="CardBrush" Color="#2C251D" />
+          <SolidColorBrush x:Key="InkBrush" Color="#F4EFE6" />
+          <SolidColorBrush x:Key="MutedBrush" Color="#C8BBA8" />
+          <SolidColorBrush x:Key="HairlineBrush" Color="#3A322A" />
+          <SolidColorBrush x:Key="AccentBrush" Color="#8FB39A" />
+          <SolidColorBrush x:Key="OnAccentBrush" Color="#221C16" />
+          <SolidColorBrush x:Key="ProblemBrush" Color="#E0B4A8" />
+          <SolidColorBrush x:Key="SelectedBrush" Color="#3C4A42" />
+          <SolidColorBrush x:Key="SupportBrush" Color="#E8988C" />
+          <SolidColorBrush x:Key="SupportTintBrush" Color="#3B2A24" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="#8FB39A" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="#A3C2AC" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed" Color="#7DA389" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeChecked" Color="#8FB39A" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="#A3C2AC" />
+          <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed" Color="#7DA389" />
+          <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="#221C16" />
+          <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" Color="#221C16" />
+          <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" Color="#221C16" />
+          <SolidColorBrush x:Key="TextControlSelectionHighlightColor" Color="#3F5A4A" />
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+      <FontFamily x:Key="SerifFont">avares://YourLocalLib/Assets/Fonts#Source Serif 4, Georgia</FontFamily>
+    </ResourceDictionary>
+  </Application.Resources>
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="avares://YourLocalLib/Styles.axaml" />
+  </Application.Styles>
+</Application>
